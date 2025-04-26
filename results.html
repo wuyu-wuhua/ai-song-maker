@@ -266,13 +266,15 @@
                 resultsContainer.innerHTML = '<h1>Error</h1><p>Could not retrieve song data. Please go back and try again.</p><a href="index.html" class="back-button">Back to Maker</a>';
             }
 
-            // --- 应用翻译 (保持不变) ---
+            // --- 应用翻译 (暂时注释掉) ---
+            /*
             const preferredLang = localStorage.getItem('preferredLang') || 'en';
             if (typeof applyTranslations === 'function') {
                 applyTranslations(preferredLang);
             } else {
                 console.error('applyTranslations function not found.');
             }
+            */
         });
     </script>
     <!-- === End: Script for results page === -->
