@@ -1,8 +1,8 @@
 // api/generate-song.js
 const axios = require('axios');
 
-// --- 更新为 'facebook/musicgen-small' ---
-const MODEL_ID = 'facebook/musicgen-small';
+// --- 更新为 'facebook/musicgen-melody' ---
+const MODEL_ID = 'facebook/musicgen-melody';
 const API_URL = `https://api-inference.huggingface.co/models/${MODEL_ID}`;
 
 module.exports = async (req, res) => {
