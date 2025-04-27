@@ -212,7 +212,7 @@
                 // 清空之前的错误信息，显示加载中
                 audioPlaceholder.innerHTML = '<p>Generating your song... please wait. This might take a minute.</p>';
 
-                // *** Fetch call starts here ***
+                // *** 开始异步处理流程 ***
                 fetch(backendUrl, {
                     method: 'POST',
                     headers: {
@@ -221,60 +221,123 @@
                     body: JSON.stringify(songData) // 发送用户输入数据
                 })
                 .then(response => {
-                    if (!response.ok) {
-                        // 尝试读取 JSON 错误信息
+                    if (response.status === 202) {
+                        // 202 Accepted 表示任务已提交
+                        return response.json();
+                    } else {
+                        // 其他错误（如 400 Bad Request）
                         return response.json().then(err => {
-                             // 将服务器返回的错误信息和状态码一起抛出
-                             throw new Error(err.message || `Server responded with status: ${response.status}`);
+                            throw new Error(err.message || `Failed to submit task. Status: ${response.status}`);
                         }).catch(() => {
-                             // 如果响应体不是 JSON 或为空，抛出通用错误
-                             throw new Error(`Server responded with status: ${response.status}`);
+                            throw new Error(`Failed to submit task. Status: ${response.status}`);
                         });
                     }
-                    return response.json(); // 解析 JSON 响应体
                 })
                 .then(data => {
-                    // --- 处理成功响应 ---
-                    if (data && data.audioData && data.contentType && data.contentType.startsWith('audio/')) {
-                        console.log('Base64 Audio Data received. Content-Type:', data.contentType);
-                        const audioElement = document.createElement('audio');
-                        audioElement.setAttribute('controls', ''); // 添加播放控件
-                        audioElement.setAttribute('src', data.audioData); // 使用 Base64 Data URL
-                        audioElement.style.width = '100%'; // 让播放器宽度适应容器
-
-                        // 替换占位符内容为播放器
-                        audioPlaceholder.innerHTML = ''; // 清空 "Generating..."
-                        audioPlaceholder.appendChild(audioElement);
-
+                    if (data && data.taskId) {
+                        // 拿到任务 ID，开始轮询状态
+                        console.log('Task submitted successfully. Task ID:', data.taskId);
+                        audioPlaceholder.innerHTML = '<p data-key="generatingStatus">Processing your song... (Task ID: ' + data.taskId + ')</p><progress max="100" value="0"></progress>'; // 显示处理中和进度条
+                        checkTaskStatus(data.taskId, audioPlaceholder, errorElement);
                     } else {
-                        // 如果后端返回成功但数据格式不对
-                        console.error("Invalid audio data format received:", data);
-                        throw new Error('Invalid audio data format from serverless function.');
+                        throw new Error('Invalid response from server after submitting task.');
                     }
                 })
                 .catch(error => {
-                    // --- 处理 fetch 错误或后端返回的错误 ---
-                    console.error('Error during song generation:', error);
-                    errorElement.textContent = `Error: ${error.message}`; // 显示具体的错误信息
-                    audioPlaceholder.innerHTML = ''; // 清空 "Generating..."
-                    audioPlaceholder.appendChild(errorElement); // 显示错误信息
+                    console.error('Error submitting song generation task:', error);
+                    // 在 audioPlaceholder 下方显示错误信息
+                    errorElement.textContent = `Error: ${error.message || 'Could not submit song generation task.'}`;
+                    if (!audioPlaceholder.contains(errorElement)) {
+                         audioPlaceholder.appendChild(errorElement);
+                    }
+                    // 可以选择清空加载提示
+                    audioPlaceholder.querySelector('p') && (audioPlaceholder.querySelector('p').textContent = 'Submission failed.');
                 });
-                // *** Fetch call ends here ***
+                // *** 异步处理流程结束 ***
 
             } else {
-                // --- 处理 sessionStorage 中没有数据的情况 ---
-                resultsContainer.innerHTML = '<h1>Error</h1><p>Could not retrieve song data. Please go back and try again.</p><a href="index.html" class="back-button">Back to Maker</a>';
+                resultsContainer.innerHTML = '<h1>Error</h1><p>No song data found. Please go back and generate a song first.</p><a href="index.html" class="back-button">Back to Generator</a>';
             }
 
-            // --- 应用翻译 (暂时注释掉) ---
-            /*
+            // --- 轮询函数 ---
+            function checkTaskStatus(taskId, placeholderElement, errorMsgElement) {
+                const statusUrl = `/api/check-status?taskId=${taskId}`;
+                let progressValue = 0;
+                const progressElement = placeholderElement.querySelector('progress'); // 获取进度条元素
+
+                const intervalId = setInterval(() => {
+                    fetch(statusUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || `Error checking status: ${response.status}`);
+                                }).catch(() => {
+                                    throw new Error(`Error checking status: ${response.status}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Task status:', data.status);
+                            errorMsgElement.textContent = ''; // 清除之前的错误信息
+
+                            if (data.status === 'completed' && data.audioUrl) {
+                                clearInterval(intervalId); // 停止轮询
+                                console.log('Song generation complete. Audio URL:', data.audioUrl);
+                                const audioElement = document.createElement('audio');
+                                audioElement.setAttribute('controls', '');
+                                audioElement.setAttribute('src', data.audioUrl); // 使用从 Blob 获取的 URL
+                                audioElement.style.width = '100%';
+                                placeholderElement.innerHTML = ''; // 清空 "Processing..."
+                                placeholderElement.appendChild(audioElement);
+
+                            } else if (data.status === 'failed') {
+                                clearInterval(intervalId); // 停止轮询
+                                console.error('Song generation failed:', data.error);
+                                errorMsgElement.textContent = `Error: ${data.error || 'Song generation failed.'}`;
+                                if (!placeholderElement.contains(errorMsgElement)) {
+                                    placeholderElement.appendChild(errorMsgElement);
+                                }
+                                placeholderElement.querySelector('p') && (placeholderElement.querySelector('p').textContent = 'Generation failed.');
+                                if (progressElement) progressElement.remove(); // 移除进度条
+
+                            } else if (data.status === 'pending' || data.status === 'processing') {
+                                // 更新进度条 (这里只是模拟，实际进度未知)
+                                if (progressElement) {
+                                     progressValue = (progressValue + 5) % 100; // 每次增加 5%，循环
+                                     progressElement.value = progressValue;
+                                }
+                                placeholderElement.querySelector('p').textContent = `Status: ${data.status}... please wait.`;
+                                // 继续轮询
+                            } else {
+                                // 未知状态
+                                clearInterval(intervalId);
+                                errorMsgElement.textContent = 'Unknown task status received.';
+                                if (!placeholderElement.contains(errorMsgElement)) {
+                                    placeholderElement.appendChild(errorMsgElement);
+                                }
+                                if (progressElement) progressElement.remove();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error during status check:', error);
+                            errorMsgElement.textContent = `Error checking status: ${error.message}`;
+                             if (!placeholderElement.contains(errorMsgElement)) {
+                                 placeholderElement.appendChild(errorMsgElement);
+                             }
+                            // 不停止轮询，允许网络恢复后继续检查
+                            // clearInterval(intervalId);
+                        });
+                }, 5000); // 每 5 秒检查一次状态
+            }
+
+            // --- 应用翻译 (如果需要的话，确保 applyTranslations 定义在 script.js)
             const preferredLang = localStorage.getItem('preferredLang') || 'en';
             if (typeof applyTranslations === 'function') {
                 applyTranslations(preferredLang);
             } else {
-                console.error('applyTranslations function not found.');
+                // console.error('applyTranslations function not found.');
             }
-            */
         });
     </script>
     <!-- === End: Script for results page === -->

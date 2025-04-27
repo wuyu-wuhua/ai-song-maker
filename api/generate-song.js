@@ -1,21 +1,24 @@
 // api/generate-song.js
-const axios = require('axios');
+import { kv } from '@vercel/kv';
+import crypto from 'crypto'; // 用于生成唯一 ID
+import axios from 'axios'; // 用于通知 Worker
 
-// --- 更新为 'facebook/musicgen-melody' ---
-const MODEL_ID = 'facebook/musicgen-melody';
-const API_URL = `https://api-inference.huggingface.co/models/${MODEL_ID}`;
+// --- 配置 ---
+// 后台 Worker 的 URL，你需要替换成你部署在 Render 上的 Worker 地址
+// 现在先用一个占位符，记得部署 Worker 后回来修改这里，并设置为 Vercel 环境变量！
+const WORKER_URL = process.env.WORKER_NOTIFY_URL || 'YOUR_WORKER_NOTIFY_URL_PLACEHOLDER';
+// 任务在 KV 中的前缀，方便管理
+const TASK_KV_PREFIX = 'songtask:';
 
-module.exports = async (req, res) => {
-    // 跨域预检请求处理 (Vercel 通常会自动处理 OPTIONS，但加上更保险)
+export default async (req, res) => {
+    // 允许所有来源 (生产环境应限制为你前端的域名和 Worker 域名)
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
     if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Origin', '*'); // 允许所有来源 (生产环境应更严格)
-        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         return res.status(200).end();
     }
-
-    // 允许来自所有来源的实际请求 (生产环境应限制为你前端的域名)
-    res.setHeader('Access-Control-Allow-Origin', '*');
 
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
@@ -23,91 +26,47 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const songData = req.body;
+        const { lyrics, title } = req.body;
+        const inputText = lyrics || title || "Default music prompt"; // 获取输入文本
 
-        const hfToken = process.env.AI_MUSIC_API_KEY; // 从 Vercel 环境变量获取
-        if (!hfToken) {
-            console.error("Hugging Face API Token not found in environment variables.");
-            return res.status(500).json({ message: "Server configuration error: API Token missing." });
+        if (!inputText || typeof inputText !== 'string' || inputText.trim() === "") {
+            return res.status(400).json({ message: "Input text (lyrics or title) cannot be empty." });
         }
 
-        const headers = {
-            'Authorization': `Bearer ${hfToken}`,
-            'Content-Type': 'application/json',
+        // 1. 生成唯一的任务 ID
+        const taskId = crypto.randomUUID();
+        const taskKey = `${TASK_KV_PREFIX}${taskId}`;
+
+        // 2. 准备任务数据
+        const taskData = {
+            id: taskId,
+            input: inputText,
+            status: 'pending', // 初始状态：等待处理
+            createdAt: new Date().toISOString(),
+            audioUrl: null,
+            error: null,
         };
 
-        // --- 使用歌词或标题作为输入 prompt ---
-        // MusicGen 通常只需要文本输入
-        const inputs = songData.lyrics || songData.title || "Generate a short piece of music"; // 提供默认值
-        if (!inputs || inputs.trim() === "") {
-             return res.status(400).json({ message: "Input text (lyrics or title) cannot be empty." });
-        }
+        // 3. 将任务存入 Vercel KV
+        // 设置一个过期时间，例如 1 小时 (3600 秒)，防止任务无限期留在 KV 中
+        await kv.set(taskKey, JSON.stringify(taskData), { ex: 3600 });
+        console.log(`Task ${taskId} created and stored in KV.`);
 
-        console.log(`Sending request to Hugging Face API (${MODEL_ID}) with inputs: "${inputs}"`);
-
-        const response = await axios.post(API_URL, { inputs: inputs }, {
-            headers: headers,
-            responseType: 'arraybuffer', // 接收二进制音频数据
-             // 设置超时 (例如 30 秒，Vercel 免费套餐限制可能更短)
-             timeout: 30000
-        });
-
-        const contentType = response.headers['content-type'];
-        console.log("Received response from Hugging Face API. Content-Type:", contentType);
-
-        if (contentType && contentType.startsWith('audio/')) {
-            // 将二进制音频数据转为 Base64 Data URL
-            const audioBase64 = Buffer.from(response.data, 'binary').toString('base64');
-            const audioDataUrl = `data:${contentType};base64,${audioBase64}`;
-
-            // 返回 Data URL 给前端
-            res.status(200).json({
-                audioData: audioDataUrl, // --- 返回 Base64 Data URL ---
-                contentType: contentType
-            });
-
+        // 4. 通知后台 Worker 有新任务 (异步，不需要等待 Worker 响应)
+        if (WORKER_URL === 'YOUR_WORKER_NOTIFY_URL_PLACEHOLDER') {
+             console.warn("WORKER_NOTIFY_URL is not configured. Worker will not be notified.");
+             // 在这种情况下，你可能需要手动触发 Worker 或设置一个轮询 Worker
         } else {
-             let errorMessage = "Received unexpected response type from AI service.";
-             try {
-                 const errorJson = JSON.parse(Buffer.from(response.data).toString('utf-8'));
-                 errorMessage = errorJson.error || errorMessage;
-             } catch (parseError) {}
-            console.error("Unexpected response type from Hugging Face API:", contentType, Buffer.from(response.data).toString('utf-8'));
-            throw new Error(errorMessage);
+            axios.post(WORKER_URL, { taskId: taskId })
+                .then(response => console.log(`Worker notified for task ${taskId}. Status: ${response.status}`))
+                .catch(err => console.error(`Error notifying worker for task ${taskId}:`, err.message || err));
         }
+
+        // 5. 返回任务 ID 给前端
+        res.status(202).json({ taskId: taskId }); // 202 Accepted 表示请求已被接受处理，但尚未完成
 
     } catch (error) {
-        console.error('Error in Hugging Face function:', error); // 打印完整错误对象
-
-        let detailedMessage = "Failed to generate song via Hugging Face.";
-        let statusCode = 500;
-
-        if (error.code === 'ECONNABORTED' || (error.message && error.message.includes('timeout'))) {
-            detailedMessage = `The request to the AI model timed out. The model might be busy or the request is too complex. Please try again later or with a shorter input. Timeout: ${error.config?.timeout}ms`;
-            statusCode = 504; // Gateway Timeout
-        } else if (error.response) {
-             // 尝试从错误响应中解析
-             try {
-                 const errorDataString = Buffer.from(error.response.data).toString('utf-8');
-                 console.error('Raw error response data:', errorDataString); // 打印原始错误数据
-                 const errorJson = JSON.parse(errorDataString);
-                 detailedMessage = errorJson.error || detailedMessage;
-                 // 处理模型加载错误
-                 if (errorJson.error && errorJson.error.includes("is currently loading")) {
-                    detailedMessage = `Model ${MODEL_ID} is loading, please try again in a few moments. Estimated time: ${errorJson.estimated_time || 'N/A'} seconds.`;
-                    statusCode = 503; // Service Unavailable
-                 } else {
-                     statusCode = error.response.status || 500; // 使用 API 返回的状态码
-                 }
-             } catch (parseError) {
-                 console.error("Could not parse error response as JSON.");
-                 detailedMessage = `API Error (${error.response.status}): ${Buffer.from(error.response.data).toString('utf-8') || error.message}`;
-                 statusCode = error.response.status || 500;
-             }
-        } else {
-             detailedMessage = error.message || detailedMessage;
-        }
-        console.error('Final error message:', detailedMessage);
-        res.status(statusCode).json({ message: detailedMessage });
+        console.error('Error creating task:', error);
+        res.status(500).json({ message: "Failed to create song generation task." });
     }
 };
