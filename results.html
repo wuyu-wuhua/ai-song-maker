@@ -207,7 +207,7 @@
                 document.getElementById('result-lyrics').textContent = songData.lyrics || 'No lyrics provided.';
 
                 // --- 调用你的后端 API (Vercel Serverless Function) ---
-                const backendUrl = '/api/generate-song'; // 指向 Vercel 函数路径
+                const backendUrl = 'https://qgr5fc.com/api/generate-song'; // 指向 Vercel 函数路径
 
                 // 清空之前的错误信息，显示加载中
                 audioPlaceholder.innerHTML = '<p>Generating your song... please wait. This might take a minute.</p>';
