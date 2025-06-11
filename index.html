@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<!-- 网站主语言设置为英语 -->
+<html lang="en">
+<head>
+    <!-- 设置字符编码为 UTF-8 -->
+    <meta charset="UTF-8">
+    <!-- 设置视口，确保在移动设备上正确显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 搜索引擎优化：设置页面标题 (40-60 字符) -->
+    <title data-key="pageTitle">Song Maker: Create AI Music Easily and Free</title>
+    <!-- 搜索引擎优化：设置页面描述 (140-160 字符) -->
+    <meta name="description" content="Discover the power of AI song making. Create unique music tracks effortlessly for free with our intuitive platform. Used by thousands, simple and practical." data-key="pageDescription">
+    <!-- 搜索引擎优化：指定规范URL，避免重复内容问题 -->
+    <link rel="canonical" href="https://bhhmapp.com/">
+    <!-- 链接外部 CSS 样式文件 -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.50.0/dist/umd/supabase.min.js"></script>
+    <!-- 预留添加其他 meta 标签或链接的位置 -->
+</head>
+<body>
+    <!-- 页面头部区域 -->
+    <header>
+        <!-- Logo区域 -->
+        <div class="logo" data-key="logoText">Song Maker</div>
+        <!-- 导航和语言切换区域 -->
+        <nav style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- 只保留英文界面，移除语言切换按钮 -->
+            <div></div>
+            <!-- 登录按钮和用户信息区（导航栏最右侧） -->
+            <div class="nav-auth">
+                <div id="user-avatar" class="user-avatar" style="display:none;"></div>
+                <div id="user-menu" class="user-menu" style="display:none;">
+                    <div class="user-menu-avatar"></div>
+                    <div class="user-menu-email" id="menu-user-email"></div>
+                    <button id="logout" class="nav-logout-btn">Log out</button>
+                </div>
+                <button id="login-google" class="nav-login-btn" data-key="loginBtn">Login</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 页面主要内容区域 -->
+    <main>
+        <!-- 英雄区域 (Hero Section) -->
+        <section class="hero">
+            <!-- 页面主标题 (H1) -->
+            <h1 data-key="heroTitle">Create Your Next Hit with AI Song Maker</h1>
+            <!-- 引导性文字 -->
+            <p data-key="heroSubtitle">Effortlessly generate unique, royalty-free music in seconds. Free, simple, and loved by creators worldwide.</p>
+            <!-- 快速开始按钮 -->
+            <button class="cta-button hero-start-button" data-key="heroButton">Start Creating Now</button>
+            <!-- 简单引导流程 -->
+            <p class="guide" data-key="heroGuide">How it works: 1. Choose style 2. Generate 3. Download!</p>
+
+            <!-- AI 歌曲生成器 UI (移除 style="display: none;") -->
+            <div class="neon-card">
+              <div class="neon-card-inner">
+                <div id="generator-ui" class="generator-container">
+                  <!-- 生成器内部容器 -->
+                  <div class="generator-content">
+                    <!-- 选项卡区域 -->
+                    <div class="generator-tabs">
+                        <button class="tab-button active" data-key="tabLyrics">Lyrics</button>
+                        <button class="tab-button" data-key="tabCustom">Custom Mode</button> 
+                        <div class="spacer"></div> 
+                        <!-- <button class="upload-button" data-key="tabUpload">Upload Lyrics</button> -->
+                    </div>
+                    <!-- 表单区域 -->
+                    <form id="song-generation-form">
+                        <!-- 歌词输入区域 -->
+                        <div class="form-group">
+                            <label for="lyrics" data-key="labelLyrics2">Lyrics</label>
+                            <textarea id="lyrics" name="lyrics" rows="8" placeholder="Enter your lyrics here..." data-key="placeholderLyrics"></textarea>
+                            <div class="char-counter">0/3000</div>
+                        </div>
+                        <!-- 歌曲标题 -->
+                        <div class="form-group">
+                            <label for="song-title" data-key="labelTitle">Title</label>
+                            <input type="text" id="song-title" name="song-title" placeholder="Enter your song title" data-key="placeholderTitle">
+                        </div>
+                         <!-- 风格输入 (改为下拉选择) -->
+                        <div class="form-group">
+                            <label for="style" data-key="labelStyle">Style</label>
+                            <select id="style" name="style" required>
+                                <option value="" data-key="selectStylePrompt">Select a style...</option> 
+                                <option value="pop">Pop</option>
+                                <option value="rock">Rock</option>
+                                <option value="hiphop">Hip Hop / Rap</option>
+                                <option value="electronic">Electronic / EDM</option>
+                                <option value="jazz">Jazz</option>
+                                <option value="blues">Blues</option>
+                                <option value="classical">Classical</option>
+                                <option value="country">Country</option>
+                                <option value="folk">Folk</option>
+                                <option value="rnb">R&B / Soul</option>
+                                <option value="reggae">Reggae</option>
+                                <option value="metal">Metal</option>
+                                <option value="ambient">Ambient</option>
+                                <!-- 可以根据需要添加更多风格 -->
+                            </select>
+                        </div>
+                        <!-- 演唱者 -->
+                        <div class="form-group singer-group">
+                            <label data-key="labelSinger">Singer</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="singer" value="male" checked> <span data-key="singerMale">Male</span></label>
+                                <label><input type="radio" name="singer" value="female"> <span data-key="singerFemale">Female</span></label>
+                                <label><input type="radio" name="singer" value="random"> <span data-key="singerRandom">Random</span></label>
+                            </div>
+                        </div>
+                        <!-- 主要生成按钮 -->
+                        <div class="form-actions-main">
+                            <button type="submit" class="generate-button" data-key="buttonGenerate">Generate</button>
+                            <p class="disclaimer" data-key="generateDisclaimer">Lyrics, title, and style may contain sensitive content.</p>
+                        </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </section>
+
+        <!-- 功能介绍/工作原理区域 -->
+        <section class="features">
+            <!-- 功能区标题 (H2) -->
+            <h2 data-key="featuresTitle">How AI Song Maker Transforms Music Creation</h2>
+            <!-- 功能点描述 -->
+            <p data-key="featuresDesc">Our advanced AI analyzes patterns and structures to compose original melodies and harmonies just for you. Experience the future of music creation with Song Maker technology – it's intuitive, fast, and surprisingly creative. No musical background needed!</p>
+            <!-- Expanded Description Start -->
+            <p data-key="featuresDescExpanded1">Dive deeper into the magic of AI song making. Our platform leverages sophisticated machine learning models trained on vast datasets of musical compositions. This allows the AI song composer to understand the nuances of melody, harmony, rhythm, and instrumentation across various genres. When you initiate song making, the AI doesn't just randomly assemble notes; it intelligently crafts musical phrases that make sense together, creating coherent and often surprisingly emotive pieces. This powerful song making capability puts professional-sounding music creation within everyone's reach.</p>
+            <p data-key="featuresDescExpanded2">Forget complex software and steep learning curves. Our commitment is to make song making accessible and enjoyable. Whether you're a seasoned musician looking for inspiration or a complete novice wanting to add a unique soundtrack to your project, our AI music making tool provides a seamless experience. The process focuses on your creative input – the lyrics, the desired style, the mood – and handles the technical heavy lifting of composition and arrangement, delivering high-quality AI song making results every time.</p>
+            <!-- Expanded Description End -->
+
+            <!-- 特性说明 -->
+            <h3 data-key="featuresBenefit1">Benefit 1: Speed</h3>
+            <p data-key="featuresBenefit1Desc">Generate tracks in seconds, not hours. In today's fast-paced world, time is precious. Traditional music composition can take days, weeks, or even months. Our AI song making technology slashes that time dramatically. Need a jingle for an ad, background music for a presentation, or a quick demo track? Get results in mere seconds. This rapid song making workflow allows creators to focus on their core tasks without getting bogged down in lengthy music production cycles. Speed is a key advantage of modern AI music making.</p>
+            <h3 data-key="featuresBenefit2">Benefit 2: Uniqueness</h3>
+            <p data-key="featuresBenefit2Desc">Every generated song is original and royalty-free. Every piece created using our song making platform is algorithmically unique. While the AI learns from existing music, its output is entirely original, ensuring your projects stand out. Furthermore, all music generated is completely royalty-free, meaning you can use it in your personal or commercial projects without worrying about licensing fees or copyright claims. This combination of originality and freedom is a hallmark of our AI song making service, providing peace of mind for creators relying on AI music making.</p>
+            
+            <!-- New Benefit 3 -->
+            <h3 data-key="featuresBenefit3">Benefit 3: Simplicity Perfected</h3>
+            <p data-key="featuresBenefit3Desc">We believe powerful technology shouldn't be complicated. Our interface is designed for intuitive navigation, making the song making process straightforward. Select your parameters, input your ideas, and let the AI song composer do the rest. No confusing menus, no overwhelming options – just pure, simple AI music making at your fingertips. This ease of use is central to our philosophy of democratizing music creation through advanced song making.</p>
+
+            <!-- New Benefit 4 -->
+            <h3 data-key="featuresBenefit4">Benefit 4: Explore Any Style</h3>
+            <p data-key="featuresBenefit4Desc">From upbeat Pop anthems and driving Rock tracks to soulful R&B ballads and atmospheric Ambient soundscapes, our AI song making engine is remarkably versatile. Don't feel limited by genre conventions! Experiment freely and discover new sonic territories. The AI song composer constantly learns and adapts, offering a wide palette for your musical explorations. This versatility makes our song making tool perfect for diverse projects requiring different musical moods and styles.</p>
+        </section>
+
+        <!-- 用户评价区域 -->
+        <section class="testimonials">
+            <!-- 评价区标题 (H2) -->
+            <h2 data-key="testimonialsTitle">Loved by Creators Everywhere</h2>
+            <!-- 评价列表 -->
+            <div class="testimonial">
+                <p data-key="testimonial1">"I was skeptical at first, but the results are amazing! Generated a perfect background track for my video in minutes. Super intuitive!"</p>
+                <span data-key="testimonial1Author">- Alex R.</span>
+            </div>
+            <div class="testimonial">
+                <p data-key="testimonial2">"Finally, a tool that makes music creation accessible. As a beginner, I found it incredibly easy to use and the quality is fantastic. Highly recommend!"</p>
+                <span data-key="testimonial2Author">- Maya K.</span>
+            </div>
+             <div class="testimonial">
+                <p data-key="testimonial3">"This is a game-changer for indie developers like me. Getting custom music used to be expensive and time-consuming. Now it's fast and free!"</p>
+                <span data-key="testimonial3Author">- Jamie L.</span>
+            </div>
+        </section>
+
+        <!-- 成功案例/应用场景区域 -->
+        <section class="case-studies">
+            <!-- 案例区标题 (H2) -->
+            <h2 data-key="caseStudiesTitle">Real Success with Generated Music</h2>
+             <!-- 案例描述 -->
+            <p data-key="caseStudiesDesc">Thousands are using AI-generated music for videos, podcasts, games, presentations, and more. See how our free tool empowers creativity across different fields.</p>
+            <!-- 可以添加具体的案例 H3 -->
+            <h3 data-key="caseStudy1">Case Study 1: YouTube Creator</h3>
+            <p data-key="caseStudy1Desc">Boosted video engagement with unique background music.</p>
+             <h3 data-key="caseStudy2">Case Study 2: Indie Game Dev</h3>
+             <p data-key="caseStudy2Desc">Created an entire game soundtrack quickly and affordably.</p>
+        </section>
+
+         <!-- 行动号召区域 -->
+        <section class="cta">
+            <!-- 行动号召标题 (H2) -->
+            <h2 data-key="ctaTitle">Ready to Compose Your Masterpiece?</h2>
+             <!-- 行动号召描述 -->
+            <p data-key="ctaDesc">Join thousands of users creating amazing music for free. Click the button below to start your musical journey with AI song making.</p>
+            <!-- 行动号召按钮 (添加 cta-scroll-button 类名) -->
+            <button class="cta-button cta-scroll-button" data-key="ctaButton">Start Generating for Free</button>
+        </section>
+
+        <!-- 预留添加更多内容区域 -->
+
+    </main>
+
+    <!-- 页面底部区域 -->
+    <footer>
+        
+        <!-- 备案号信息 -->
+        <p><a href="https://beian.miit.gov.cn" rel="nofollow">渝ICP备2025054340号</a></p>
+        <!-- 联系邮箱 -->
+        <p data-key="contactEmail">Contact: ytsgabcde00020@2925.com</p>
+    </footer>
+    <!-- 保证script.js在所有内容和按钮之后加载 -->
+    <script src="script.js"></script>
+</body>
+</html> 

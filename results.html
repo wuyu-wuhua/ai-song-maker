@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Maker Results</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to the main stylesheet -->
+    <style>
+        /* Add specific styles for results page if needed */
+        body {
+            /* padding-top: 80px; */ /* Remove this line */
+        }
+        .results-container {
+            max-width: 1100px; /* Increase max-width for side-by-side layout */
+            margin: 2rem auto;
+            padding: 2rem;
+            /* background-color: #1a1a2e; */ /* Container background can be transparent */
+            border-radius: 8px;
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */ /* Remove shadow from main container */
+            color: #e0e0e0;
+        }
+        /* Style the main title */
+        .results-container > h1 {
+            color: #87CEFA; /* Light blue */
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem; /* Adjust size if needed */
+        }
+
+        /* Flex container for the columns */
+        .results-columns {
+            display: flex;
+            gap: 2rem; /* Space between columns */
+        }
+
+        .result-section {
+           /* margin-bottom: 2rem; */ /* Remove margin-bottom for flex items */
+           /* padding-bottom: 1.5rem; */ /* Remove padding-bottom */
+           /* border-bottom: 1px solid #2c3e50; */ /* Remove bottom border */
+            flex: 1; /* Make sections share space equally */
+            background-color: #080c18; /* Change background to match body */
+            border-radius: 8px; /* Keep border-radius */
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */ /* Remove shadow */
+            padding: 1.5rem; /* Adjust padding if needed */
+            /* Add border if needed for separation */
+             border: 1px solid #2c3e50; 
+        }
+        .result-section:last-child {
+            /* border-bottom: none; */
+            /* margin-bottom: 0; */
+            /* padding-bottom: 0; */
+        }
+        .result-section h2 {
+            color: #ffffff;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+        }
+        .result-section p,
+        .result-section pre {
+            color: #b0b0c0;
+            white-space: pre-wrap; /* Preserve line breaks in lyrics */
+            word-wrap: break-word;
+            background-color: #2c2c38; /* Slightly different background for pre */
+            padding: 1rem;
+            border-radius: 5px;
+            max-height: 300px; /* Limit height for long lyrics */
+            overflow-y: auto; /* Add scroll for long lyrics */
+            margin-bottom: 1rem; /* Add margin between paragraphs/pre */
+        }
+
+        /* --- Custom Scrollbar for Lyrics Box (WebKit) --- */
+        #result-lyrics::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
+        }
+
+        #result-lyrics::-webkit-scrollbar-track {
+            background: #2c2c38; /* Track background same as pre background */
+            border-radius: 5px; /* Optional: round the track */
+        }
+
+        #result-lyrics::-webkit-scrollbar-thumb {
+            background-color: #555; /* Color of the scroll thumb */
+            border-radius: 5px; /* Round the scroll thumb */
+            border: 2px solid #2c2c38; /* Creates padding around thumb */
+        }
+
+        #result-lyrics::-webkit-scrollbar-thumb:hover {
+            background-color: #777; /* Thumb color on hover */
+        }
+        /* --- End Custom Scrollbar --- */
+
+         .result-section span {
+             font-weight: bold;
+             color: #ffffff;
+         }
+        .audio-player-placeholder {
+            margin-top: 1rem;
+            padding: 2rem;
+            background-color: #2c2c38;
+            border-radius: 5px;
+            text-align: center;
+            color: #a0a0b0;
+        }
+        .back-button {
+            display: block; /* Make button block level for centering */
+            width: fit-content; /* Button width fits content */
+            margin: 2rem auto 0; /* Center button with top margin */
+            padding: 0.8rem 2rem;
+            background: linear-gradient(to right, #007bff, #0056b3, #007bff);
+            background-size: 200% auto;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+            animation: gradientShift 3s linear infinite;
+        }
+        .back-button:hover {
+             transform: scale(1.05);
+        }
+
+        /* Responsive stacking */
+        @media (max-width: 768px) {
+            .results-columns {
+                display: block; /* Stack columns */
+            }
+            .result-section {
+                margin-bottom: 2rem; /* Add margin back for stacked view */
+                /* Optionally add border-bottom back if needed */
+                 border-bottom: 1px solid #2c3e50; 
+                 padding-bottom: 1.5rem;
+            }
+             .result-section:last-of-type {
+                 margin-bottom: 0;
+                 border-bottom: none;
+                 padding-bottom: 1.5rem; /* Keep padding consistent */
+             }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Reuse the same header -->
+     <header>
+        <div class="logo" data-key="logoText">Song Maker</div>
+        <nav>
+            <div class="language-switcher">
+                <button data-lang="en">English</button>
+                <button data-lang="zh">中文</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="results-container">
+        <h1>Your AI Generated Song</h1>
+
+        <!-- Wrapper for side-by-side columns -->
+        <div class="results-columns">
+            <!-- Display User Input -->
+            <section class="result-section">
+                <h2>Your Input</h2>
+                <p><strong>Title:</strong> <span id="result-title"></span></p>
+                <p><strong>Style:</strong> <span id="result-style"></span></p>
+                <p><strong>Singer:</strong> <span id="result-singer"></span></p>
+                <div>
+                    <strong>Lyrics:</strong>
+                    <pre id="result-lyrics"></pre>
+                </div>
+            </section>
+
+            <!-- Display AI Song -->
+            <section class="result-section">
+                <h2>AI Generated Song</h2>
+                <div class="audio-player-placeholder">
+                    <p>Generating your song... please wait.</p>
+                    <!-- Placeholder for actual audio player -->
+                    <!-- <audio controls src="path/to/generated/song.mp3"></audio> -->
+                </div>
+            </section>
+        </div> <!-- End of results-columns -->
+
+        <a href="index.html" class="back-button">Generate Another Song</a>
+
+    </main>
+
+    <!-- Link to main JS for language switching, and potentially a new results.js -->
+    <script src="script.js"></script>
+    <!-- === Start: Script for results page === -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const songDataString = sessionStorage.getItem('songMakerData');
+            const resultsContainer = document.querySelector('.results-container');
+            const audioPlaceholder = document.querySelector('.audio-player-placeholder');
+            const errorElement = document.createElement('p'); // Element to show errors
+            errorElement.style.color = 'red';
+            errorElement.style.marginTop = '1rem'; // Add some space for the error message
+
+            // --- 先显示用户输入 ---
+            if (songDataString) {
+                const songData = JSON.parse(songDataString);
+                document.getElementById('result-title').textContent = songData.title || 'N/A';
+                document.getElementById('result-style').textContent = songData.style || 'N/A';
+                document.getElementById('result-singer').textContent = songData.singer || 'N/A';
+                document.getElementById('result-lyrics').textContent = songData.lyrics || 'No lyrics provided.';
+
+                // --- 调用你的后端 API (Vercel Serverless Function) ---
+                const backendUrl = 'https://qgr5fc.com/api/generate-song'; // 指向 Vercel 函数路径
+
+                // 清空之前的错误信息，显示加载中
+                audioPlaceholder.innerHTML = '<p>Generating your song... please wait. This might take a minute.</p>';
+
+                // *** 开始异步处理流程 ***
+                fetch(backendUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(songData) // 发送用户输入数据
+                })
+                .then(response => {
+                    if (response.status === 202) {
+                        // 202 Accepted 表示任务已提交
+                        return response.json();
+                    } else {
+                        // 其他错误（如 400 Bad Request）
+                        return response.json().then(err => {
+                            throw new Error(err.message || `Failed to submit task. Status: ${response.status}`);
+                        }).catch(() => {
+                            throw new Error(`Failed to submit task. Status: ${response.status}`);
+                        });
+                    }
+                })
+                .then(data => {
+                    if (data && data.taskId) {
+                        // 拿到任务 ID，开始轮询状态
+                        console.log('Task submitted successfully. Task ID:', data.taskId);
+                        audioPlaceholder.innerHTML = '<p data-key="generatingStatus">Processing your song... (Task ID: ' + data.taskId + ')</p><progress max="100" value="0"></progress>'; // 显示处理中和进度条
+                        checkTaskStatus(data.taskId, audioPlaceholder, errorElement);
+                    } else {
+                        throw new Error('Invalid response from server after submitting task.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting song generation task:', error);
+                    // 在 audioPlaceholder 下方显示错误信息
+                    errorElement.textContent = `Error: ${error.message || 'Could not submit song generation task.'}`;
+                    if (!audioPlaceholder.contains(errorElement)) {
+                         audioPlaceholder.appendChild(errorElement);
+                    }
+                    // 可以选择清空加载提示
+                    audioPlaceholder.querySelector('p') && (audioPlaceholder.querySelector('p').textContent = 'Submission failed.');
+                });
+                // *** 异步处理流程结束 ***
+
+            } else {
+                resultsContainer.innerHTML = '<h1>Error</h1><p>No song data found. Please go back and generate a song first.</p><a href="index.html" class="back-button">Back to Generator</a>';
+            }
+
+            // --- 轮询函数 ---
+            function checkTaskStatus(taskId, placeholderElement, errorMsgElement) {
+                const statusUrl = `/api/check-status?taskId=${taskId}`;
+                let progressValue = 0;
+                const progressElement = placeholderElement.querySelector('progress'); // 获取进度条元素
+
+                const intervalId = setInterval(() => {
+                    fetch(statusUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    throw new Error(err.message || `Error checking status: ${response.status}`);
+                                }).catch(() => {
+                                    throw new Error(`Error checking status: ${response.status}`);
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Task status:', data.status);
+                            errorMsgElement.textContent = ''; // 清除之前的错误信息
+
+                            if (data.status === 'completed' && data.audioUrl) {
+                                clearInterval(intervalId); // 停止轮询
+                                console.log('Song generation complete. Audio URL:', data.audioUrl);
+                                const audioElement = document.createElement('audio');
+                                audioElement.setAttribute('controls', '');
+                                audioElement.setAttribute('src', data.audioUrl); // 使用从 Blob 获取的 URL
+                                audioElement.style.width = '100%';
+                                placeholderElement.innerHTML = ''; // 清空 "Processing..."
+                                placeholderElement.appendChild(audioElement);
+
+                            } else if (data.status === 'failed') {
+                                clearInterval(intervalId); // 停止轮询
+                                console.error('Song generation failed:', data.error);
+                                errorMsgElement.textContent = `Error: ${data.error || 'Song generation failed.'}`;
+                                if (!placeholderElement.contains(errorMsgElement)) {
+                                    placeholderElement.appendChild(errorMsgElement);
+                                }
+                                placeholderElement.querySelector('p') && (placeholderElement.querySelector('p').textContent = 'Generation failed.');
+                                if (progressElement) progressElement.remove(); // 移除进度条
+
+                            } else if (data.status === 'pending' || data.status === 'processing') {
+                                // 更新进度条 (这里只是模拟，实际进度未知)
+                                if (progressElement) {
+                                     progressValue = (progressValue + 5) % 100; // 每次增加 5%，循环
+                                     progressElement.value = progressValue;
+                                }
+                                placeholderElement.querySelector('p').textContent = `Status: ${data.status}... please wait.`;
+                                // 继续轮询
+                            } else {
+                                // 未知状态
+                                clearInterval(intervalId);
+                                errorMsgElement.textContent = 'Unknown task status received.';
+                                if (!placeholderElement.contains(errorMsgElement)) {
+                                    placeholderElement.appendChild(errorMsgElement);
+                                }
+                                if (progressElement) progressElement.remove();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error during status check:', error);
+                            errorMsgElement.textContent = `Error checking status: ${error.message}`;
+                             if (!placeholderElement.contains(errorMsgElement)) {
+                                 placeholderElement.appendChild(errorMsgElement);
+                             }
+                            // 不停止轮询，允许网络恢复后继续检查
+                            // clearInterval(intervalId);
+                        });
+                }, 5000); // 每 5 秒检查一次状态
+            }
+
+            // --- 应用翻译 (如果需要的话，确保 applyTranslations 定义在 script.js)
+            const preferredLang = localStorage.getItem('preferredLang') || 'en';
+            if (typeof applyTranslations === 'function') {
+                applyTranslations(preferredLang);
+            } else {
+                // console.error('applyTranslations function not found.');
+            }
+        });
+    </script>
+    <!-- === End: Script for results page === -->
+     <footer>
+
+        <p><a href="https://beian.miit.gov.cn" rel="nofollow">渝ICP备2025054340号</a></p>
+        <p data-key="contactEmail">Contact: ytsgabcde00020@2925.com</p>
+    </footer>
+</body>
+</html> 

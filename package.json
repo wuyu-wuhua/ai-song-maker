@@ -1,0 +1,18 @@
+{
+  "name": "song",
+  "version": "1.0.0",
+  "description": "创建一个名为 \"Song Generation\" 的 AI 歌曲生成网站 (域名: bhhmapp.com)。该网站旨在提供一个简单、免费且实用的 AI 音乐创作工具，吸引对 AI 音乐生成感兴趣的用户。",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
+    "@vercel/blob": "^1.0.0",
+    "@vercel/kv": "^3.0.0",
+    "axios": "^1.9.0"
+  }
+}

@@ -1,0 +1,941 @@
+/* 全局样式重置，消除浏览器默认内外边距 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* 让元素的宽度计算包含内边距和边框 */
+}
+
+/* 基础 HTML 和 Body 样式 (深色主题) */
+html,
+body {
+    width: 100%; /* 宽度撑满 */
+    min-height: 100vh;
+    font-family: sans-serif; /* 可以考虑换成更现代的字体 */
+    line-height: 1.6; /* 设置合适的行高 */
+    background: linear-gradient(120deg, #232b38, #1f1f38, #2d2d4d, #232b38, #1f1f38);
+    background-size: 300% 300%;
+    animation: gradient-move 12s ease-in-out infinite;
+    color: #e0e0e0; /* 默认浅色文字 */
+}
+
+@keyframes gradient-move {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 主容器样式 (可选，用于整体居中或限制最大宽度) */
+/*
+.container {
+    max-width: 1200px; 
+    margin: 0 auto; 
+    padding: 0 15px; 
+}
+*/
+
+/* 页头 Header 样式 (深色主题) */
+header {
+    display: flex; /* 使用 Flexbox 布局 */
+    justify-content: space-between; /* 两端对齐 */
+    align-items: center; /* 垂直居中 */
+    padding: 1rem 10%; /* 上下 1rem, 左右 10% 的内边距 */
+    background-color: #080c18; /* 与 body 统一，非常深的蓝黑色 */
+    border-bottom: 1px solid #1f2937; /* 调整边框颜色以匹配 */
+}
+
+/* Logo 样式 (调整颜色以适应深色背景) */
+.logo {
+    font-size: 1.5rem; /* 减小字体大小 */
+    font-weight: bold; /* 字体加粗 */
+    color: #87CEFA; /* 改为浅蓝色 */
+    /* TODO: 卡通风格 */
+}
+
+/* 导航 Nav 样式 */
+nav {
+    /* 导航样式 */
+}
+
+/* 语言切换器样式 (恢复深灰背景+金黄文字) */
+.language-switcher button {
+    /* background: linear-gradient(to right, #007bff, #0056b3, #007bff); */
+    /* background-size: 200% auto; */
+    background-color: #333; /* 恢复深灰色背景 */
+    border: none;
+    padding: 0.4rem 0.8rem; /* 恢复之前的内边距 */
+    margin-left: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem; /* 恢复字体大小 */
+    color: #BDE0FE; /* 恢复金黄色文字 */
+    font-weight: bold;
+    border-radius: 4px; /* 恢复圆角 */
+    text-transform: uppercase; /* 恢复大写 */
+    transition: background-color 0.3s ease, color 0.3s ease; /* 恢复颜色过渡 */
+    /* animation: gradientShift 3s linear infinite; */ /* 移除动画 */
+}
+
+.language-switcher button:hover {
+    background-color: #444; /* 恢复悬停背景 */
+    color: #ffffff; /* 恢复悬停文字颜色 */
+    /* transform: scale(1.05); */ /* 移除缩放 */
+}
+
+/* 主要内容区域 Main 样式 */
+main {
+    /* 主要内容区域的通用样式 */
+}
+
+/* 内容区块 Section 通用样式 (移除浅色背景) */
+section {
+    padding: 4rem 18rem; /* 上下内边距大，左右内边距增加到 18rem (极大) */
+    text-align: center; /* 内容居中 */
+    /* border-bottom: 1px solid #2c3e50; */ /* 移除底部边框 */
+    max-width: 700px;
+    margin: 24px auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+/* 标题 H1, H2, H3 样式 (深色主题) */
+h1 {
+    font-size: 2.5rem; /* H1 字体大小 */
+    margin-bottom: 1rem; /* H1 下外边距 */
+    color: #ffffff; /* 白色标题 */
+    word-break: break-word;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+h2 {
+    font-size: 2rem; /* H2 字体大小 */
+    margin-bottom: 1.5rem; /* H2 下外边距 */
+    color: #f0f0f0; /* 稍暗的白色 */
+    word-break: break-word;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+h3 {
+    font-size: 1.5rem; /* H3 字体大小 */
+    margin-bottom: 1rem; /* H3 下外边距 */
+    color: #d0d0d0; /* 更暗的白色 */
+    word-break: break-word;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+/* 段落 P 样式 (深色主题) */
+p {
+    margin-bottom: 1rem; /* 段落下外边距 */
+    max-width: 600px; /* 限制段落最大宽度，提高可读性 (保持默认) */
+    margin-left: auto; /* 配合 max-width 居中 (保持默认) */
+    margin-right: auto; /* 配合 max-width 居中 (保持默认) */
+    color: #b0b0c0; /* 浅灰蓝色文字 */
+    word-break: break-word;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* NEW RULE: Override paragraph width limits for specific sections */
+.features p,
+.case-studies p,
+.cta p {
+    max-width: none; /* 取消最大宽度限制 */
+    margin-left: 0;  /* 取消自动居中 */
+    margin-right: 0; /* 取消自动居中 */
+}
+
+/* 按钮 Button 样式 (深色主题) */
+.cta-button {
+    display: inline-block;
+    padding: 0.8rem 3rem; /* 增加左右内边距，让按钮更长 */
+    /* background-image: linear-gradient(to right, #007bff, #0056b3, #007bff); */ /* Corrected gradient */
+    background: linear-gradient(to right, #007bff, #0056b3, #007bff);
+    background-size: 200% auto; /* 让背景宽度是按钮的两倍 */
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    margin-top: 1rem;
+    transition: transform 0.2s ease; /* 添加简单的变换过渡 */
+    animation: gradientShift 3s linear infinite; /* 应用动画 */
+}
+
+.cta-button:hover {
+    /* background-image: linear-gradient(to right, #0069d9, #004085); /* 移除hover渐变 */
+    transform: scale(1.05); /* 添加简单的放大效果 */
+    /* filter: brightness(1.1); */ /* 或者轻微提亮 */
+}
+
+/* 特定区块样式 */
+
+/* Hero 区域样式 (移除浅色背景) */
+.hero {
+    /* background-color: #e9ecef; */ /* 移除 */
+    padding: 6rem 2rem; /* 更大的内边距 */
+}
+
+.hero h1 {
+    /* color: #ffffff; */ /* 移除静态白色 */
+    font-size: 2.8rem; /* 可以稍微调大一点 */
+    margin-bottom: 1rem;
+    /* 添加文本渐变动画效果 */
+    background: linear-gradient(to right, #87CEFA 20%, #ffffff 50%, #87CEFA 80%); /* 浅蓝-白-浅蓝 渐变 */
+    background-size: 200% auto; /* 背景尺寸 */
+    color: transparent; /* 文字透明，显示背景 */
+    -webkit-background-clip: text; /* Webkit 浏览器兼容 */
+    background-clip: text; /* 标准语法 */
+    animation: textGradientShift 4s linear infinite; /* 应用动画，调整速度为 4 秒 */
+    /* 让 H1 内联显示，以便背景精确包裹文字 */
+    display: inline-block;
+}
+
+.hero .guide {
+    font-size: 0.9rem; /* 引导文字较小 */
+    color: #a0a0b0; /* 调整引导文字颜色 */
+    margin-top: 1.5rem; /* 与按钮的间距 */
+}
+
+/* 用户评价 Testimonials 区域样式 (深色卡片) */
+.testimonials .testimonial {
+    background-color: #2c2c38; /* 深色卡片背景 */
+    padding: 1.5rem; /* 内边距 */
+    margin-bottom: 1.5rem; /* 卡片间距 */
+    border-radius: 8px; /* 圆角 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 调整阴影 */
+    max-width: 500px; /* 限制卡片宽度 */
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left; /* 卡片内文字左对齐 */
+}
+
+.testimonials .testimonial p {
+    margin-bottom: 0.5rem; /* 评价内容下边距 */
+    font-style: italic; /* 斜体 */
+    color: #d0d0d0; /* 调整评价文字颜色 */
+}
+
+.testimonials .testimonial span {
+    display: block; /* 块级元素 */
+    text-align: right; /* 作者名右对齐 */
+    font-weight: bold; /* 加粗 */
+    font-size: 0.9rem; /* 字体稍小 */
+    color: #a0a0ff; /* 调整作者颜色 */
+}
+
+/* 页脚 Footer 样式 (深色主题) */
+footer {
+    padding: 2rem; /* 内边距 */
+    text-align: center; /* 文本居中 */
+    background-color: #080c18; /* 与 body 统一，非常深的蓝黑色 */
+    color: #a0a0b0; /* 调整页脚文字颜色 */
+    font-size: 0.9rem; /* 字体大小 */
+    margin-top: 4rem; /* Add margin to separate from content */
+}
+
+footer p {
+    margin-bottom: 0.5rem; /* 段落间距 */
+    max-width: none; /* 取消最大宽度限制 */
+    color: #a0a0b0; /* 确保文字颜色 */
+}
+
+footer a {
+    color: #c0c0ff; /* 调整链接颜色 */
+    text-decoration: none; /* 去除下划线 */
+}
+
+footer a:hover {
+    color: #ffffff; /* 悬停时变白 */
+    text-decoration: underline; /* 鼠标悬停加下划线 */
+}
+
+/* --- AI 歌曲生成器 UI 样式 (保持深色) --- */
+
+/* 生成器外部容器 */
+.generator-container {
+    margin-top: 3rem; /* 与上方内容的间距 */
+}
+
+/* 生成器内部内容区域 (背景与页面相同) */
+.generator-content {
+    max-width: 800px; /* 限制最大宽度 */
+    margin: 0 auto; /* 水平居中 */
+    padding: 2rem; /* 内边距 */
+    background-color: #080c18; /* 改为与页面背景色相同 */
+    border-radius: 10px; /* 保留圆角 */
+    border: 1px solid #555; /* 添加边框 */
+    color: #e0e0e0; /* 浅色文字 */
+    text-align: left; /* 内容左对齐 */
+    /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); */ /* 移除阴影 */
+}
+
+/* 生成器内部标题 H2 */
+.generator-title {
+    color: #ffffff; /* 白色标题 */
+    font-size: 1.8rem; /* 字体大小 */
+    text-align: center; /* 标题居中 */
+    margin-bottom: 0.5rem; /* 下边距 */
+}
+
+/* 生成器内部描述 P */
+.generator-description {
+    color: #b0b0b0; /* 稍暗的描述文字颜色 */
+    font-size: 1rem; /* 字体大小 */
+    text-align: center; /* 描述居中 */
+    margin-bottom: 1.5rem; /* 下边距 */
+    max-width: 600px; /* 限制描述宽度 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 渐变试用按钮 */
+.gradient-button {
+    display: block; /* 块级元素，占满一行 */
+    width: 100%; /* 宽度100% */
+    padding: 1rem; /* 内边距 */
+    margin-bottom: 2rem; /* 下边距 */
+    border: none; /* 无边框 */
+    border-radius: 8px; /* 圆角 */
+    background-image: linear-gradient(to right, #8e44ad, #3498db); /* 紫色到蓝色渐变 (近似) */
+    color: #ffffff; /* 白色文字 */
+    font-size: 1.1rem; /* 字体大小 */
+    font-weight: bold; /* 字体加粗 */
+    cursor: pointer; /* 鼠标指针 */
+    transition: opacity 0.3s ease; /* 透明度过渡 */
+}
+
+.gradient-button:hover {
+    opacity: 0.9; /* 鼠标悬停时稍透明 */
+}
+
+/* 选项卡区域 */
+.generator-tabs {
+    display: flex; /* 使用 Flexbox 布局 */
+    margin-bottom: 1.5rem; /* 下边距 */
+    border-bottom: 1px solid #444; /* 底部边框 */
+}
+
+/* 通用选项卡按钮 */
+.generator-tabs button {
+    padding: 0.8rem 1.5rem; /* 内边距 */
+    background: none; /* 无背景 */
+    border: none; /* 无边框 */
+    border-bottom: 3px solid transparent; /* 底部透明边框，用于激活状态 */
+    color: #a0a0a0; /* 未激活文字颜色 */
+    font-size: 1rem; /* 字体大小 */
+    cursor: pointer; /* 鼠标指针 */
+    transition: color 0.3s ease, border-color 0.3s ease; /* 颜色过渡 */
+    margin-bottom: -1px; /* 盖住父元素的边框 */
+}
+
+/* 激活状态的选项卡按钮 */
+.generator-tabs button.active {
+    color: #ffffff;
+    border-bottom-color: #007bff; /* 改为蓝色 */
+}
+
+/* 选项卡按钮鼠标悬停效果 (非激活状态) */
+.generator-tabs button:not(.active):hover {
+    color: #ffffff;
+}
+
+/* 表单组通用样式 */
+.form-group {
+    margin-bottom: 1.5rem; /* 表单项之间的间距 */
+}
+
+/* 表单标签 Label */
+.form-group label,
+.form-group .radio-group label span /* For radio button text */
+ {
+    display: block; /* 块级元素，占一行 */
+    margin-bottom: 0.5rem; /* 与输入控件的间距 */
+    color: #c0c0c0; /* 标签颜色 */
+    font-weight: bold; /* 字体加粗 */
+    font-size: 0.9rem; /* 字体大小 */
+}
+
+/* 输入框 Input[type=text], Textarea, Select (通用样式) */
+input[type="text"],
+textarea,
+select {
+    display: block; /* Ensure they behave as block elements */
+    width: 100%;
+    padding: 0.8rem; /* Consistent padding */
+    background-color: #1e1e28;
+    border: 1px solid #555;
+    border-radius: 5px;
+    font-size: 1rem;
+    line-height: 1.6; /* Match body line-height or set specific */
+    box-sizing: border-box; /* Ensure padding/border included in width/height */
+    vertical-align: middle; /* Align vertically */
+    color: #e0e0e0; /* Default text color for inputs */
+}
+
+/* Specific styles for Select dropdown */
+select {
+    color: #777; /* Override default color for prompt */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23e0e0e0" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1.2em;
+    padding-right: 2.5rem; /* Add padding for arrow */
+}
+
+/* 当选择了有效选项时，恢复 Select 正常文字颜色 */
+select:valid {
+    color: #e0e0e0;
+}
+
+/* 输入框和 Textarea 的 focus 状态 */
+input[type="text"]:focus,
+textarea:focus,
+select:focus /* Apply consistent focus to select too */
+ {
+    outline: none;
+    border-color: #007bff; /* 改为蓝色 */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 改为蓝色辉光 */
+}
+
+/* Remove redundant select focus rule */
+/*
+select:focus {
+     outline: none;
+    border-color: #8e44ad;
+    box-shadow: 0 0 5px rgba(142, 68, 173, 0.5);
+}
+*/
+
+/* 字符计数器 (恢复样式) */
+.char-counter {
+    font-size: 0.8rem;
+    color: #888;
+    text-align: right;
+    margin-top: 0.3rem;
+}
+
+/* 单选按钮组 */
+.radio-group label {
+    display: inline-flex; /* 行内 Flex 布局 */
+    align-items: center; /* 垂直居中 */
+    margin-right: 1rem; /* 选项间距 */
+    cursor: pointer;
+    color: #c0c0c0; /* 重设文字颜色 */
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 0.4rem; /* 单选按钮与文字的间距 */
+    /* 可以考虑自定义单选按钮样式 */
+}
+
+/* 主要操作按钮区域 (生成按钮) */
+.form-actions-main {
+    text-align: center; /* 按钮和免责声明居中 */
+    margin-top: 2rem; /* 上边距 */
+}
+
+/* 主要生成按钮 (应用渐变动画) */
+.generate-button {
+    padding: 1rem 2.5rem;
+    /* background-color: #8e44ad; */ /* 移除紫色 */
+    background: linear-gradient(to right, #007bff, #0056b3, #007bff); /* 应用蓝色渐变 */
+    background-size: 200% auto; /* 背景尺寸 */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease; /* 只保留 transform 过渡 */
+    animation: gradientShift 3s linear infinite; /* 应用动画 */
+}
+
+.generate-button:hover {
+    /* background-color: #a049c8; */ /* 移除悬停背景色改变 */
+    /* background-image: linear-gradient(to right, #0069d9, #004085); */ /* 移除 hover 渐变改变 */
+    transform: scale(1.05); /* 只保留缩放效果 */
+}
+
+/* 免责声明 */
+.disclaimer {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.8rem;
+    max-width: none; /* 取消父级 p 的宽度限制 */
+}
+
+/* --- 器乐切换开关样式 --- */
+.toggle-group {
+    display: flex; /* Flex 布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: space-between; /* 两端对齐 */
+}
+
+.toggle-group label:first-of-type { /* 选择文字标签 */
+    margin-bottom: 0; /* 移除默认下边距 */
+}
+
+/* 开关容器 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px; /* 开关宽度 */
+  height: 26px; /* 开关高度 */
+}
+
+/* 隐藏默认的 checkbox */
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* 滑块样式 */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #555; /* 关闭状态背景色 */
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px; /* 滑块圆点高度 */
+  width: 20px; /* 滑块圆点宽度 */
+  left: 3px; /* 滑块圆点左边距 */
+  bottom: 3px; /* 滑块圆点下边距 */
+  background-color: white; /* 滑块圆点颜色 */
+  transition: .4s;
+}
+
+/* 选中状态 (开启) */
+input:checked + .slider {
+  background-color: #007bff; /* 开启状态背景色 (蓝色) */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #007bff; /* 改为蓝色 */
+}
+
+/* 选中状态下滑块圆点的位置 */
+input:checked + .slider:before {
+  transform: translateX(24px); /* 向右移动 */
+}
+
+/* 圆角样式 */
+.slider.round {
+  border-radius: 26px; /* 使背景变圆 */
+}
+
+.slider.round:before {
+  border-radius: 50%; /* 使滑块圆点变圆 */
+}
+
+/* 响应式调整 (生成器部分) */
+@media (max-width: 768px) {
+    .generator-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .generator-title {
+        font-size: 1.5rem;
+    }
+
+    .generator-description {
+        font-size: 0.9rem;
+    }
+
+    .gradient-button {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+
+    .generator-tabs {
+        overflow-x: auto; /* 允许选项卡横向滚动 */
+        white-space: nowrap; /* 防止选项卡换行 */
+    }
+    .generator-tabs button {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    input[type="text"],
+    textarea,
+    select,
+    .generate-button {
+        font-size: 0.9rem; /* 统一调整字体大小 */
+    }
+
+    .generate-button {
+        padding: 0.8rem 2rem;
+    }
+
+    section {
+        padding: 2rem 12rem; /* 调整移动端 Section 内边距，左右增加到 12rem (极大) */
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+    }
+
+    .cta-button {
+        width: 100%;
+        max-width: 300px;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+    }
+     .language-switcher button {
+         margin: 0.2rem;
+     }
+}
+
+/* 响应式设计 Media Queries (全局调整) */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .logo {
+        margin-bottom: 0.5rem;
+    }
+
+    nav {
+        margin-top: 0.5rem;
+    }
+
+    section {
+        padding: 2rem 12rem; /* 调整移动端 Section 内边距，左右增加到 12rem (极大) */
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+    }
+
+    .cta-button {
+        width: 100%;
+        max-width: 300px;
+        padding: 0.8rem 1rem;
+        font-size: 1rem;
+    }
+
+    .language-switcher {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: center;
+    }
+     .language-switcher button {
+         margin: 0.2rem;
+     }
+
+    /* 移动端生成器特定调整 (保持不变) */
+     .generator-content {
+         padding: 1.5rem 1rem;
+     }
+     /* ... */
+}
+
+/* --- 定义文本渐变动画 --- */
+@keyframes textGradientShift {
+    0% {
+        background-position: 0% 50%; /* 起始位置 */
+    }
+    50% {
+        background-position: 100% 50%; /* 移动到最右 */
+    }
+    100% {
+        background-position: 0% 50%; /* 回到起始位置 */
+    }
+}
+
+/* --- 定义按钮背景渐变动画 (保持不变) --- */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%; /* 起始位置 */
+    }
+    50% {
+        background-position: 100% 50%; /* 移动到最右 */
+    }
+    100% {
+        background-position: 0% 50%; /* 回到起始位置，形成循环 */
+    }
+}
+
+/* 右上角头像和用户名，悬停头像时用户名隐藏并弹出卡片 */
+.user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--avatar-bg, #6bbf43);
+    cursor: pointer;
+    padding: 0;
+    border-radius: 50%;
+    height: 38px;
+    width: 38px;
+    position: relative;
+    z-index: 11;
+    /* 不显示字母 */
+}
+.user-avatar span#avatar-initial {
+    width: 38px;
+    height: 38px;
+    background: #6bbf43;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* 用户头像圆形按钮 */
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: box-shadow 0.2s;
+    user-select: none;
+}
+.user-avatar:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+/* 用户信息悬浮卡片 */
+.user-menu {
+    position: absolute;
+    top: 56px;
+    right: 0;
+    background: #232b38;
+    color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    padding: 28px 32px 20px 32px;
+    min-width: 220px;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    font-size: 16px;
+    animation: fadeIn 0.18s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.user-menu-avatar {
+    width: 48px;
+    height: 48px;
+    background: var(--avatar-bg, #6bbf43);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+.user-menu-email {
+    font-size: 15px;
+    color: #e0e7ff;
+    margin-bottom: 8px;
+    word-break: break-all;
+    text-align: center;
+}
+.nav-logout-btn {
+    background: #6bbf43;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.18s, color 0.18s;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.nav-logout-btn:hover {
+    background: #4b8c2a;
+    color: #fff;
+}
+
+.nav-auth {
+    position: absolute;
+    right: 32px;
+    top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+}
+
+/* 响应式适配 */
+@media (max-width: 700px) {
+    .nav-auth {
+        right: 12px;
+        top: 12px;
+    }
+    .user-menu {
+        right: 8px;
+        top: 48px;
+        min-width: 120px;
+        padding: 10px 12px 8px 12px;
+        font-size: 13px;
+    }
+    .user-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 15px;
+    }
+}
+
+.nav-login-btn {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid #fff;
+    border-radius: 18px;
+    padding: 8px 28px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.18s, border 0.18s, color 0.18s;
+    margin-left: 8px;
+    box-shadow: none;
+}
+.nav-login-btn:hover {
+    background: rgba(255,255,255,0.10);
+    border-width: 2px;
+    color: #fff;
+}
+
+.neon-card {
+    position: relative;
+    border-radius: 18px;
+    padding: 2px;
+    background: linear-gradient(120deg, #ff00aa, #00FFF1, #6bbf43, #3b5bdb, #ff00aa);
+    background-size: 300% 300%;
+    animation: gradient-move 12s ease-in-out infinite;
+    overflow: hidden;
+    margin: 0 auto 32px auto;
+    max-width: 900px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+}
+.neon-card-inner {
+    border-radius: 16px;
+    background: rgba(20, 20, 30, 0.55);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 48px 48px 36px 48px;
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    margin: 0 auto;
+}
+.neon-card-inner input,
+.neon-card-inner select,
+.neon-card-inner textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    .neon-card {
+        max-width: 98vw;
+    }
+    .neon-card-inner {
+        max-width: 98vw;
+        padding: 18px 4vw;
+    }
+}
+
+@media (max-width: 600px) {
+    section, .neon-card {
+        max-width: 98vw;
+        padding: 0 6vw;
+    }
+    h1 {
+        font-size: 1.5rem;
+        line-height: 1.2;
+    }
+    h2 {
+        font-size: 1.15rem;
+        line-height: 1.2;
+    }
+    h3 {
+        font-size: 1rem;
+        line-height: 1.2;
+    }
+    p, li {
+        font-size: 0.98rem;
+        line-height: 1.5;
+        text-align: left;
+    }
+    .neon-card-inner {
+        max-width: 98vw;
+        padding: 18px 4vw;
+    }
+}
+@media (max-width: 400px) {
+    h1, h2, h3 {
+        font-size: 1rem;
+    }
+    section, .neon-card {
+        padding: 0 2vw;
+    }
+} 
